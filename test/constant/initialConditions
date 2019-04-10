@@ -10,17 +10,13 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    location    "system";
-    object      controlDict;
+    object      initialConditions;
 }
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-application     pointKineticsFoam;
+neutronDensity 10.0;
 
-deltaT  0.000000000001;
-
-endTime 100.0;
-
-writeFrequency 0;
+firstDelayedPrecursorDensity 6717.48;
 
 // ************************************************************************* //

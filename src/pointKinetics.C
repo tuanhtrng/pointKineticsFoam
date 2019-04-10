@@ -27,21 +27,43 @@ License
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::pointKinetics::pointKinetics(
-    const Foam::scalar reactivity,
-    const Foam::scalar totalDelayedPrecursorFraction,
-//  const Foam::scalar firstDelayedPrecursorFraction,
-    const Foam::scalar firstDelayedPrecursorDecayConstant,
-    const Foam::scalar neutronGenerationTime
-)
+Foam::pointKinetics::pointKinetics(const dictionary& reactorProperties)
 :
     ODESystem(),
-    reactivity_(reactivity),
-    totalDelayedPrecursorFraction_(totalDelayedPrecursorFraction),
-//  firstDelayedPrecursorFraction_(firstDelayedPrecursorFraction),
-    firstDelayedPrecursorFraction_(totalDelayedPrecursorFraction),
-    firstDelayedPrecursorDecayConstant_(firstDelayedPrecursorDecayConstant),
-    neutronGenerationTime_(neutronGenerationTime)
+    reactivity_
+    (
+        readScalar
+        (
+            reactorProperties.lookup("reactivity")
+        )
+    ),
+    totalDelayedPrecursorFraction_
+    (
+        readScalar
+        (
+            reactorProperties.lookup("totalDelayedPrecursorFraction")
+        )
+    ),
+    firstDelayedPrecursorFraction_
+    (
+        readScalar
+        (
+            reactorProperties.lookup("firstDelayedPrecursorFraction")
+        )
+    ),
+    firstDelayedPrecursorDecayConstant_
+    (
+        readScalar
+        (
+            reactorProperties.lookup("firstDelayedPrecursorDecayConstant")
+        )
+    ),
+    meanNeutronGenerationTime_(
+        readScalar
+        (
+            reactorProperties.lookup("meanNeutronGenerationTime")
+        )
+    )
 {};
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
@@ -63,7 +85,7 @@ Foam::pointKinetics::derivatives
     dydx[0] =
         // Prompt neutron generation
         (reactivity_ - totalDelayedPrecursorFraction_)
-       /neutronGenerationTime_
+       /meanNeutronGenerationTime_
        *y[0]
       + // Delayed precursor group one
         firstDelayedPrecursorDecayConstant_
@@ -73,7 +95,7 @@ Foam::pointKinetics::derivatives
     dydx[1] = 
         // Prompt neutron
         firstDelayedPrecursorFraction_
-       /neutronGenerationTime_
+       /meanNeutronGenerationTime_
        *y[0]
       - // Delayed precursor group one
         firstDelayedPrecursorDecayConstant_
@@ -97,13 +119,13 @@ Foam::pointKinetics::jacobian
     // Prompt neutron
     dfdy[0][0] =
         (reactivity_ - totalDelayedPrecursorFraction_)
-       /neutronGenerationTime_;
+       /meanNeutronGenerationTime_;
     // Delayed precursor
     dfdy[0][1] = firstDelayedPrecursorDecayConstant_;
 
     // Delayed precursor
     dfdy[1][0] = 
-        firstDelayedPrecursorFraction_/neutronGenerationTime_;
+        firstDelayedPrecursorFraction_/meanNeutronGenerationTime_;
     dfdy[1][1] = - firstDelayedPrecursorDecayConstant_;
 };
 

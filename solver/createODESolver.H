@@ -10,4 +10,4 @@ IOdictionary odeSolver
     )
 );
 
-autoPtr<ODESolver> solver = ODESolver::New(ode, odeSolver);
+autoPtr<ODESolver> solver = ODESolver::New(pointKineticsEquations, odeSolver);

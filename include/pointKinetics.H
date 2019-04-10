@@ -55,7 +55,7 @@ class pointKinetics
         scalar totalDelayedPrecursorFraction_;
         scalar firstDelayedPrecursorFraction_;
         scalar firstDelayedPrecursorDecayConstant_;
-        scalar neutronGenerationTime_;//s
+        scalar meanNeutronGenerationTime_;//s
 
     // Private Member Functions
 
@@ -71,13 +71,7 @@ public:
     // Constructors
 
         //- Construct from components
-        pointKinetics(
-            const scalar reactivity,
-            const scalar totalDelayedPrecursorFraction,
-//          const scalar firstDelayedPrecursorFraction,
-            const scalar firstDelayedPrecursorDecayConstant,
-            const scalar neutronGenerationTime
-        );
+        pointKinetics(const dictionary& reactorProperties);
 
     // Member Functions
 
