@@ -41,7 +41,6 @@ int main(int argc, char *argv[])
     argList::validArgs.append("ODESolver");
     argList args(argc, argv);
 
-    #include "createSolverTime.H"
 
     scalar net_reactivity = 0.2*0.0065;
     const scalar delayed_neutron_fraction = 0.0065;
@@ -92,13 +91,15 @@ int main(int argc, char *argv[])
         << "\t" << "Neutron Density (MW)"
         << endl;
 
+    #include "createSolverTime.H"
+
     // integration loop
     for (label i=0; i<n; i++)
     {
         Info<< xStart 
             << "\t" << yStart[0]
             << endl;
-        xEnd = xStart + deltaT;
+        xEnd = xStart + runTime.deltaT().value();
         ode.derivatives(xStart, yStart, dyStart);
         odeSolver->solve(xStart, xEnd, yStart, dxEst);
         xStart = xEnd;
