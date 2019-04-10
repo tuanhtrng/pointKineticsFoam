@@ -1,4 +1,4 @@
 src/pointKinetics.C
-app/pointKineticsFoam.C
+solver/pointKineticsFoam.C
 
 EXE = $(FOAM_USER_APPBIN)/pointKineticsFoam
