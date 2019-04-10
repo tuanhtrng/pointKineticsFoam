@@ -26,10 +26,10 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "IOmanip.H"
-#include "IOdictionary.H"
-#include "pointKinetics.H"
 #include "ODESolver.H"
+#include "Time.H"
+
+#include "pointKinetics.H"
 
 using namespace Foam;
 
@@ -40,6 +40,8 @@ int main(int argc, char *argv[])
 {
     argList::validArgs.append("ODESolver");
     argList args(argc, argv);
+
+    #include "createSolverTime.H"
 
     scalar net_reactivity = 0.2*0.0065;
     const scalar delayed_neutron_fraction = 0.0065;
@@ -54,8 +56,6 @@ int main(int argc, char *argv[])
        /prompt_neutron_generation_time
        /delayed_neutron_decay_constant
        *y0_0;//MW 
-    const label n = 1000;
-    const scalar endTime = 100.0;
 
     // Create the ODE system
     pointKinetics ode
@@ -77,8 +77,6 @@ int main(int argc, char *argv[])
     // start time
     scalar xStart = 0.0;
 
-    // time step
-    const scalar dx = endTime/n;
     // initial displacement and velocity
     scalarField yStart(ode.nEqns());
     yStart[0] = y0_0;
@@ -100,7 +98,7 @@ int main(int argc, char *argv[])
         Info<< xStart 
             << "\t" << yStart[0]
             << endl;
-        xEnd = xStart + dx;
+        xEnd = xStart + deltaT;
         ode.derivatives(xStart, yStart, dyStart);
         odeSolver->solve(xStart, xEnd, yStart, dxEst);
         xStart = xEnd;

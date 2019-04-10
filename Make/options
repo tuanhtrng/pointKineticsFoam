@@ -1,5 +1,6 @@
 EXE_INC = \
     -Iinclude \
+    -Isolver \
     -I$(LIB_SRC)/ODE/lnInclude
 
 EXE_LIBS = \
