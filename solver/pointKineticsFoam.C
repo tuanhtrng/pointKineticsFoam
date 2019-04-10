@@ -66,40 +66,29 @@ int main(int argc, char *argv[])
 
     // Initialise the ODE system fields
 
-    // start time
-    scalar xStart = 0.0;
-
     // initial displacement and velocity
-    scalarField yStart(ode.nEqns());
-    yStart[0] = y0_0;
-    yStart[1] = y1_0;
-    // integration initial step
-    scalar dxEst = 0.1;
-    scalar xEnd = 0.0;
+    scalarField y(ode.nEqns());
+    y[0] = y0_0;
+    y[1] = y1_0;
 
     // required to store dydx
-    scalarField dyStart(ode.nEqns());
+    scalarField dy(ode.nEqns());
 
-    Info<< "Time"
-        << "\t" << "Neutron Density (MW)"
-        << endl;
-
-    #include "createSolverTime.H"
+    #include "createTime.H"
     #include "createODESolver.H"
 
     // integration loop
-    for (label i=0; i<n; i++)
+    while (runTime.running())
     {
-        Info<< xStart 
-            << "\t" << yStart[0]
-            << endl;
-        xEnd = xStart + runTime.deltaT().value();
-        ode.derivatives(xStart, yStart, dyStart);
-        solver->solve(xStart, xEnd, yStart, dxEst);
-        xStart = xEnd;
+        scalar t = runTime.timeOutputValue();
+        scalar deltaT = runTime.deltaT().value();
+        
+        ode.derivatives(t, y, dy);
+        solver->solve(t, y, deltaT);
+        
+        runTime.setDeltaT(deltaT);
+        runTime.setTime(t, runTime.timeIndex() + 1);
     }
-
-    Info<< "\nEND\n" << endl;
 
     return 0;
 }
