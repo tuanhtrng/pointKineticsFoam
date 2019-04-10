@@ -27,6 +27,7 @@ Description
 
 #include "argList.H"
 #include "ODESolver.H"
+#include "IOdictionary.H"
 #include "Time.H"
 
 #include "pointKinetics.H"
@@ -38,9 +39,7 @@ using namespace Foam;
 
 int main(int argc, char *argv[])
 {
-    argList::validArgs.append("ODESolver");
     argList args(argc, argv);
-
 
     scalar net_reactivity = 0.2*0.0065;
     const scalar delayed_neutron_fraction = 0.0065;
@@ -65,12 +64,6 @@ int main(int argc, char *argv[])
         prompt_neutron_generation_time
     );
 
-    dictionary dict;
-    dict.add("solver", args[1]);
-
-    // Create the selected ODE system solver
-    autoPtr<ODESolver> odeSolver = ODESolver::New(ode, dict);
-
     // Initialise the ODE system fields
 
     // start time
@@ -92,6 +85,7 @@ int main(int argc, char *argv[])
         << endl;
 
     #include "createSolverTime.H"
+    #include "createODESolver.H"
 
     // integration loop
     for (label i=0; i<n; i++)
@@ -101,7 +95,7 @@ int main(int argc, char *argv[])
             << endl;
         xEnd = xStart + runTime.deltaT().value();
         ode.derivatives(xStart, yStart, dyStart);
-        odeSolver->solve(xStart, xEnd, yStart, dxEst);
+        solver->solve(xStart, xEnd, yStart, dxEst);
         xStart = xEnd;
     }
 
