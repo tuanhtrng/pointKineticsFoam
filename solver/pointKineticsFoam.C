@@ -26,8 +26,10 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
-#include "ODESolver.H"
+#include "fileName.H"
 #include "IOdictionary.H"
+#include "ODESolver.H"
+#include "OFstream.H"
 #include "Time.H"
 
 #include "pointKinetics.H"
@@ -44,6 +46,7 @@ int main(int argc, char *argv[])
     #include "createTime.H"
     #include "createPointKineticsEquations.H"
     #include "createScalarFields.H"
+    #include "createOFstream.H"
     #include "createODESolver.H"
 
     while (runTime.running())
@@ -56,6 +59,8 @@ int main(int argc, char *argv[])
         
         runTime.setDeltaT(deltaT);
         runTime.setTime(t, runTime.timeIndex() + 1);
+
+        #include "writeScalarFields.H"
     }
 
     return 0;
